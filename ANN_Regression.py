@@ -8,6 +8,7 @@ import argparse
 from modules.Symmetry_Set_Basis import Symmetry_Set_Basis
 from modules.Operator_Basis import Operator_Basis
 from datasets.Load_data import Load_data
+import matplotlib.pyplot as plt
 
 def Arguments():
     parser = argparse.ArgumentParser()
@@ -31,7 +32,7 @@ def main(args):
             logical_gpus = tf.config.experimental.list_logical_devices('GPU')
             print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
         except RuntimeError as e:
-        # Visible devices must be set before GPUs have been initialized
+            # Visible devices must be set before GPUs have been initialized
             print(e)
 
     x_reg, y_reg = Load_data(args.csv_path)
@@ -56,11 +57,10 @@ def main(args):
     #---------------------------------------------------------- Call Backs
     model_type = args.model_type
     save_dir = args.save_dirs
-    model_name = '{}_model.pth'.format(args.model_type) #% model_type 
+    model_name = '{}_model_'.format(args.model_type) #% model_type 
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir)
     filepath = os.path.join(save_dir, model_name)
-    import pdb;pdb.set_trace()
     checkpoint = keras.callbacks.ModelCheckpoint(filepath=filepath, verbose=1, save_best_only=True)
     csv_logger = keras.callbacks.CSVLogger(save_dir+model_type+'.csv')
     earlystop = keras.callbacks.EarlyStopping(
@@ -82,7 +82,27 @@ def main(args):
     ##-----------------------------------------Train
 
     modelANN.fit(np.log(np.abs(x_reg)+1), np.log(np.abs(y_reg)+1), callbacks = callbacks, shuffle=True , epochs=30, batch_size=32, verbose=1) #you need to set validation data
+    y_pre = modelANN.predict(np.log(np.abs(x_reg)+1))
 
+    if not os.path.exists("plot"):
+        os.makedirs("plot")
+    plt.title("Analytic NN - Regression(input(,18))")
+    plt.xlabel("Model Prediction")
+    plt.ylabel("Target")
+    plt.scatter(y_pre,np.log(np.abs(y_reg)+1))
+    plt.savefig("./plot/Regression_Scatter.png")
+    plt.show()
+
+    plt.title("Analytic NN - Regression(input(,18))")
+    plt.xlabel("Target space")
+    plt.ylabel("Number of data")
+    plt.hist(y_pre, histtype='step', label = "model prediction")
+    plt.hist(np.log(np.abs(y_reg)+1), histtype='step',  label = "target")
+    plt.savefig("./plot/Regression_Hist.png")
+    plt.legend()
+    plt.show()
+
+    modelANN.save("./pre_train_models")
 
 if __name__ == "__main__":
     args = Arguments()

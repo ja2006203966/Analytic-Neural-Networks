@@ -1,7 +1,16 @@
 import pandas as pd
 import numpy as np
+import os
+import glob
+import zipfile
 
 def Load_data(csv_path):
+    if not os.path.exists(csv_path):
+        data_root = os.path.join(*csv_path.split("/")[:-1])
+        zip_path = glob.glob(os.path.join(data_root,'*.zip'))[0]
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(data_root)
+        
     ## Import data 
     data = pd.read_csv(csv_path)
     x_rg = data.values
