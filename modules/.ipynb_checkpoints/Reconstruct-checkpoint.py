@@ -2,12 +2,11 @@ import tensorflow as tf
 import numpy as np
 ## This module is used to reconstruct Analytics function
 class Symmetry_Set_Basis_Reconstruct(tf.keras.layers.Layer):
-    def __init__(self, node=7, num_out=1, rank=2):
+    def __init__(self, node=7, num_out=1, rank=2, weights = [[],[],[],[]]):
         super(Symmetry_Set_Basis_Reconstruct, self).__init__()
         self.node = node
-        self.wq = tf.keras.layers.Dense(node)
-        self.wq2 = tf.keras.layers.Dense(node)
-        self.wk = tf.keras.layers.Dense(node)
+        self.wq = tf.keras.layers.Dense(node, weights = [weights[0], weights[1]])
+        self.wk = tf.keras.layers.Dense(node, weights = [weights[2], weights[3]])
         self.num_out = num_out
         self.p = [[0,2,1],[0,1,3,2], [0,1,2,4,3], [0,1,2,3,5,4]][rank-2]
         self.rui = tf.random_uniform_initializer(minval=-10, maxval=10)
@@ -90,13 +89,12 @@ class Symmetry_Set_Basis_Reconstruct(tf.keras.layers.Layer):
         return v, n
         
 class Operator_Basis_Reconstruct(tf.keras.layers.Layer):
-    def __init__(self, node=3, num_out=1, rank=2):
+    def __init__(self, node=3, num_out=1, rank=2, weights = [[],[],[],[],[],[]]):
         super(Operator_Basis_Reconstruct, self).__init__()
         self.node = node
-        self.wq = tf.keras.layers.Dense(node)
-        self.wq2 = tf.keras.layers.Dense(node)
-        self.wk = tf.keras.layers.Dense(node)
-        self.alpha = tf.keras.layers.Dense(1)
+        self.wq = tf.keras.layers.Dense(node, weights = [weights[0], weights[1]])
+        self.wk = tf.keras.layers.Dense(node, weights = [weights[2], weights[3]])
+        self.alpha = tf.keras.layers.Dense(1, weights = [weights[4], weights[5]])
         self.num_out = num_out
         self.p = [[0,2,1],[0,1,3,2], [0,1,2,4,3], [0,1,2,3,5,4]][rank-2]
     
@@ -157,7 +155,7 @@ def Out_Analytic_Set(x, n, index, rgsnw=1, rgsnb=0, mode = "SSB"):
     SSB_keys = ["vc1", "vc2", "vc3", "vc4", "vp2", "vp3", "vp4"]
     OB_keys = ["sqrt", "ln", "rgsn"]
     x0 = np.empty(x.shape, dtype=np.str) 
-    x0 = x0.astype(np.dtype('<U32'))
+    x0 = x0.astype(np.dtype('<U200'))
     for i in range(len(x)):
         if i in index:
             
@@ -169,10 +167,17 @@ def Out_Analytic_Set(x, n, index, rgsnw=1, rgsnb=0, mode = "SSB"):
                     x0[i] =x0[i] + w[j]+"*"+SSB_keys[j]+"("+x[i]+")"
             if mode == "OB":
                 for j in range(len(OB_keys)):
-                    x0[i] = x0[i] + w[j]+"*"+OB_keys[j]+"("+x[i]+")"
+                    if OB_keys[j] == "rgsn":
+                        x0[i] = x0[i] + w[j]+"*"+str(rgsnw)+"*"+"("+x[i]+")"+str(rgsnb)
+                    else:
+                        x0[i] = x0[i] + w[j]+"*"+OB_keys[j]+"("+x[i]+")"
     return x0
                     
                 
+        
+
+
+        
         
 
 
