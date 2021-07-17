@@ -1,0 +1,6 @@
+*.pyc
+*.csv
+*.pb
+*.png
+*.index
+*.data*
