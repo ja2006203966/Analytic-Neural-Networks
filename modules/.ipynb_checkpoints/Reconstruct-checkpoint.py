@@ -160,12 +160,10 @@ def Out_Analytic_Set(x, n, index, rgsnw=1, rgsnb=0, mode = "SSB"):
     x0 = x0.astype(np.dtype('<U32'))
     for i in range(len(x)):
         if i in index:
-            print(i)
             
             w = np.take(n, np.linspace(0, len(index)-1, len(index))[index==i].astype(np.int32), axis=0)
             w = w.astype(np.str)
             w = np.squeeze(w)
-            print(w)
             if mode == "SSB":
                 for j in range(len(SSB_keys)):
                     x0[i] =x0[i] + w[j]+"*"+SSB_keys[j]+"("+x[i]+")"
