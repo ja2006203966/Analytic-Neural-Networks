@@ -93,6 +93,7 @@ def main(args):
     plt.savefig("./plot/Regression_Scatter.png")
     plt.show()
 
+<<<<<<< HEAD
     plt.title("Analytic NN - Regression(input(,18))")
     plt.xlabel("Target space")
     plt.ylabel("Number of data")
@@ -103,6 +104,28 @@ def main(args):
     plt.show()
 
     modelANN.save("./pre_train_models")
+=======
+
+y_pre = modelANN.predict(np.log(np.abs(x_rg)+1))
+plt.title("Analytic NN - Regression(input(,18))")
+plt.xlabel("Model Prediction")
+plt.ylabel("Target")
+plt.scatter(y_pre,np.log(np.abs(y_rg)+1))
+plt.savefig("./plot/Regression_Scatter.png")
+plt.show()
+
+plt.title("Analytic NN - Regression(input(,18))")
+plt.xlabel("Target space")
+plt.ylabel("Number of data")
+plt.hist(y_pre, histtype='step', label = "model prediction")
+plt.hist(np.log(np.abs(y_rg)+1), histtype='step',  label = "target")
+plt.savefig("./plot/Regression_Hist.png")
+plt.legend()
+plt.show()
+
+modelANN.save("./pre_train_models")
+
+>>>>>>> ece809cb818b19afa47379bc8d2b2515ed78b277
 
 if __name__ == "__main__":
     args = Arguments()
