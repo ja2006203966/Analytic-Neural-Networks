@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf 
 from Reconstruct import Symmetry_Set_Basis_Reconstruct, Operator_Basis_Reconstruct, Selection_Reconstruct, rgsn_Reconstruct, Out_Analytic_Set
 
-def Regression_Reconstruct(path, x_rg, y_rg):
-    test = tf.keras.models.load_model(path)
+def Regression_Reconstruct(model_path, x_rg, y_rg):
+    test = tf.keras.models.load_model(model_path)
     a = np.empty([18], dtype=np.str)
     x, y = tf.constant(x_rg), tf.constant(y_rg)
     x, n = Symmetry_Set_Basis_Reconstruct(num_out=1, rank=tf.rank(x), weights =test.layers[1].get_weights())(x, x, x)

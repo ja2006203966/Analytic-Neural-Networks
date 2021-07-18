@@ -149,13 +149,15 @@ def Selection_Reconstruct(n, r = 0.01, ind=[False]):
 def rgsn_Reconstruct(rgsn):
     return tf.squeeze(rgsn[0]).numpy(), tf.squeeze(rgsn[1]).numpy() # weight, bias
 
-def Out_Analytic_Set(x, n, index, rgsnw=1, rgsnb=0, mode = "SSB"):
-    n = np.around(n,4)
+def Out_Analytic_Set(x, n, index, rgsnw=1, rgsnb=0, mode = "SSB", digits=2):
+    n = np.around(n, digits)
+    rgsnw = np.around(rgsnw, digits)
+    rgsnb = np.around(rgsnb, digits)
     n = n.astype(np.str)
     SSB_keys = ["vc1", "vc2", "vc3", "vc4", "vp2", "vp3", "vp4"]
     OB_keys = ["sqrt", "ln", "rgsn"]
     x0 = np.empty(x.shape, dtype=np.str) 
-    x0 = x0.astype(np.dtype('<U200'))
+    x0 = x0.astype(np.dtype('<U1000'))
     for i in range(len(x)):
         if i in index:
             
@@ -164,15 +166,14 @@ def Out_Analytic_Set(x, n, index, rgsnw=1, rgsnb=0, mode = "SSB"):
             w = np.squeeze(w)
             if mode == "SSB":
                 for j in range(len(SSB_keys)):
-                    x0[i] =x0[i] + w[j]+"*"+SSB_keys[j]+"("+x[i]+")"
+                    x0[i] =x0[i] +"+"+ w[j]+"*"+SSB_keys[j]+"("+x[i]+")"
             if mode == "OB":
                 for j in range(len(OB_keys)):
                     if OB_keys[j] == "rgsn":
-                        x0[i] = x0[i] + w[j]+"*"+str(rgsnw)+"*"+"("+x[i]+")"+str(rgsnb)
+                        x0[i] = x0[i]+"+" + w[j]+"*"+str(rgsnw)+"*"+"("+x[i]+")"+str(rgsnb)
                     else:
-                        x0[i] = x0[i] + w[j]+"*"+OB_keys[j]+"("+x[i]+")"
-    return x0
-                    
+                        x0[i] = x0[i]+"+" + w[j]+"*"+OB_keys[j]+"("+x[i]+")"
+    return x0       
                 
         
 
