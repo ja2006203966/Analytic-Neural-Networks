@@ -1,3 +1,5 @@
+import tensorflow as tf
+import numpy as np
 class FourierSeries(tf.keras.layers.Layer):
     def __init__(self, rank=2, node = 10):
         super(FourierSeries, self).__init__()
